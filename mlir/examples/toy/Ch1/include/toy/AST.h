@@ -36,6 +36,7 @@ public:
     Expr_VarDecl,
     Expr_Return,
     Expr_Num,
+    Expr_String,
     Expr_Literal,
     Expr_Var,
     Expr_BinOp,
@@ -70,6 +71,19 @@ public:
 
   /// LLVM style RTTI
   static bool classof(const ExprAST *c) { return c->getKind() == Expr_Num; }
+};
+
+/// Expression class for string literals like '"hello !"'.
+class StringExprAST : public ExprAST {
+  std::string Val;
+
+public:
+  StringExprAST(Location loc, std::string val) : ExprAST(Expr_String, loc), Val(val) {}
+
+  std::string getValue() { return Val; }
+
+  /// LLVM style RTTI
+  static bool classof(const ExprAST *c) { return c->getKind() == Expr_String; }
 };
 
 /// Expression class for a literal value.

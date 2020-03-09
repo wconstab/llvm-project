@@ -85,6 +85,15 @@ private:
     return std::move(result);
   }
 
+  /// Parse a literal string.
+  /// numberexpr ::= number
+  std::unique_ptr<ExprAST> parseStringExpr() {
+    auto loc = lexer.getLastLocation();
+    auto result =
+        std::make_unique<StringExprAST>(std::move(loc), lexer.getStringValue());
+    lexer.consume(tok_string);
+    return std::move(result);
+  }
   /// Parse a literal array expression.
   /// tensorLiteral ::= [ literalList ] | number
   /// literalList ::= tensorLiteral | tensorLiteral, literalList
@@ -226,6 +235,8 @@ private:
       return parseIdentifierExpr();
     case tok_number:
       return parseNumberExpr();
+    case tok_string:
+      return parseStringExpr();
     case '(':
       return parseParenExpr();
     case '[':

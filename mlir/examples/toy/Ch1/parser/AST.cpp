@@ -41,6 +41,7 @@ private:
   void dump(ExprAST *expr);
   void dump(ExprASTList *exprList);
   void dump(NumberExprAST *num);
+  void dump(StringExprAST *string);
   void dump(LiteralExprAST *node);
   void dump(VariableExprAST *node);
   void dump(ReturnExprAST *node);
@@ -111,6 +112,12 @@ void ASTDumper::dump(ExprASTList *exprList) {
 void ASTDumper::dump(NumberExprAST *num) {
   INDENT();
   llvm::errs() << num->getValue() << " " << loc(num) << "\n";
+}
+
+/// A literal string, just print the value.
+void ASTDumper::dump(StringExprAST *string) {
+  INDENT();
+  llvm::errs() << string->getValue() << " " << loc(string) << "\n";
 }
 
 /// Helper to print recursively a literal. This handles nested array like:
