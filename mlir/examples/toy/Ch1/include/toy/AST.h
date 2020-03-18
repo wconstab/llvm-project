@@ -26,6 +26,15 @@ namespace toy {
 
 /// A variable type with shape information.
 struct VarType {
+  typedef enum {
+    Var_Tensor,
+    Var_String
+  } VarType_t;
+  VarType(VarType_t type) : type(type)
+        {
+        }
+
+  VarType_t type;
   std::vector<int64_t> shape;
 };
 

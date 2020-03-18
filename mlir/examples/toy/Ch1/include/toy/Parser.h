@@ -304,7 +304,7 @@ private:
       return parseError<VarType>("<", "to begin type");
     lexer.getNextToken(); // eat <
 
-    auto type = std::make_unique<VarType>();
+    auto type = std::make_unique<VarType>(VarType::Var_Tensor);
 
     while (lexer.getCurToken() == tok_number) {
       type->shape.push_back(lexer.getValue());
@@ -342,10 +342,21 @@ private:
         return nullptr;
     }
 
-    if (!type)
-      type = std::make_unique<VarType>();
     lexer.consume(Token('='));
     auto expr = parseExpression();
+
+    if (!type) {
+
+      auto *StringExpr = llvm::dyn_cast<StringExprAST>(expr.get());
+      if (StringExpr){
+        type = std::make_unique<VarType>(VarType::Var_String);
+        printf("Making String Type");
+      } else {
+        type = std::make_unique<VarType>(VarType::Var_Tensor);
+        printf("Defaulting to Tensor Type");
+      }
+    }
+
     return std::make_unique<VarDeclExprAST>(std::move(loc), std::move(id),
                                             std::move(*type), std::move(expr));
   }
