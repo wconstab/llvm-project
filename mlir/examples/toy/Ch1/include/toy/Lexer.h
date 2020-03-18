@@ -36,7 +36,6 @@ enum Token : int {
   tok_bracket_close = '}',
   tok_sbracket_open = '[',
   tok_sbracket_close = ']',
-  tok_double_quote = '"',
 
   tok_eof = -1,
 
@@ -48,7 +47,6 @@ enum Token : int {
   // primary
   tok_identifier = -5,
   tok_number = -6,
-  tok_string = -7,
 };
 
 /// The Lexer is an abstract base class providing all the facilities that the
@@ -89,11 +87,6 @@ public:
   double getValue() {
     assert(curTok == tok_number);
     return numVal;
-  }
-
-  std::string getStringValue() {
-    assert(curTok == tok_string);
-    return stringStr;
   }
 
   /// Return the location for the beginning of the current token.
@@ -155,19 +148,6 @@ private:
       return tok_identifier;
     }
 
-    // String: "[.]"
-    if (lastChar == tok_double_quote) {
-      std::string str;
-      while ((lastChar = Token(getNextChar())) != '"') {
-        str += lastChar;
-      }
-      stringStr = str;
-      // Consume the final '"'
-      lastChar = Token(getNextChar());
-      return tok_string;
-    }
-
-
     // Number: [0-9.]+
     if (isdigit(lastChar) || lastChar == '.') {
       std::string numStr;
@@ -211,9 +191,6 @@ private:
 
   /// If the current Token is a number, this contains the value.
   double numVal = 0;
-
-  /// If the current Token is a string, this contains the value.
-  std::string stringStr;
 
   /// The last value returned by getNextChar(). We need to keep it around as we
   /// always need to read ahead one character to decide when to end a token and

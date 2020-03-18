@@ -26,15 +26,6 @@ namespace toy {
 
 /// A variable type with shape information.
 struct VarType {
-  typedef enum {
-    Var_Tensor,
-    Var_String
-  } VarType_t;
-  VarType(VarType_t type) : type(type)
-        {
-        }
-
-  VarType_t type;
   std::vector<int64_t> shape;
 };
 
@@ -45,7 +36,6 @@ public:
     Expr_VarDecl,
     Expr_Return,
     Expr_Num,
-    Expr_String,
     Expr_Literal,
     Expr_Var,
     Expr_BinOp,
@@ -80,19 +70,6 @@ public:
 
   /// LLVM style RTTI
   static bool classof(const ExprAST *c) { return c->getKind() == Expr_Num; }
-};
-
-/// Expression class for string literals like '"hello !"'.
-class StringExprAST : public ExprAST {
-  std::string Val;
-
-public:
-  StringExprAST(Location loc, std::string val) : ExprAST(Expr_String, loc), Val(val) {}
-
-  std::string getValue() { return Val; }
-
-  /// LLVM style RTTI
-  static bool classof(const ExprAST *c) { return c->getKind() == Expr_String; }
 };
 
 /// Expression class for a literal value.

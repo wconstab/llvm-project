@@ -41,7 +41,6 @@ private:
   void dump(ExprAST *expr);
   void dump(ExprASTList *exprList);
   void dump(NumberExprAST *num);
-  void dump(StringExprAST *string);
   void dump(LiteralExprAST *node);
   void dump(VariableExprAST *node);
   void dump(ReturnExprAST *node);
@@ -79,7 +78,7 @@ template <typename T> static std::string loc(T *node) {
 void ASTDumper::dump(ExprAST *expr) {
   mlir::TypeSwitch<ExprAST *>(expr)
       .Case<BinaryExprAST, CallExprAST, LiteralExprAST, NumberExprAST,
-            PrintExprAST, ReturnExprAST, VarDeclExprAST, VariableExprAST, StringExprAST>(
+            PrintExprAST, ReturnExprAST, VarDeclExprAST, VariableExprAST>(
           [&](auto *node) { this->dump(node); })
       .Default([&](ExprAST *) {
         // No match, fallback to a generic message
@@ -112,12 +111,6 @@ void ASTDumper::dump(ExprASTList *exprList) {
 void ASTDumper::dump(NumberExprAST *num) {
   INDENT();
   llvm::errs() << num->getValue() << " " << loc(num) << "\n";
-}
-
-/// A literal string, just print the value.
-void ASTDumper::dump(StringExprAST *string) {
-  INDENT();
-  llvm::errs() << "\"" << string->getValue() << "\" " << loc(string) << "\n";
 }
 
 /// Helper to print recursively a literal. This handles nested array like:
@@ -201,10 +194,7 @@ void ASTDumper::dump(PrintExprAST *node) {
 /// Print type: only the shape is printed in between '<' and '>'
 void ASTDumper::dump(const VarType &type) {
   llvm::errs() << "<";
-  if(type.type == VarType::Var_Tensor)
-    mlir::interleaveComma(type.shape, llvm::errs());
-  else if(type.type == VarType::Var_String)
-    llvm::errs() << "String";
+  mlir::interleaveComma(type.shape, llvm::errs());
   llvm::errs() << ">";
 }
 
